@@ -14,8 +14,13 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-xs uppercase tracking-widest font-bold text-slate-400 hover:text-white border-transparent hover:border-slate-500">
                         {{ __('Panel Principal') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('catalogo')" :active="request()->routeIs('dashboard')" class="text-xs uppercase tracking-widest font-bold text-slate-400 hover:text-white border-transparent hover:border-slate-500">
+                        {{ __('Catálogo') }}
+                    </x-nav-link>
                 </div>
             </div>
+
+
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">

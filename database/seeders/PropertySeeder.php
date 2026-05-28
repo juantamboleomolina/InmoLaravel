@@ -10,18 +10,15 @@ class PropertySeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Buscamos al usuario admin, si no existe lo creamos
-        $admin = User::firstOrCreate(
-            ['email' => 'admin@admin.com'], // Buscamos por email
-            [
-                'name' => 'Admin Inmo',
-                'password' => bcrypt('password'), // Contraseña por defecto
-            ]
-        );
+        // Creamos a TU usuario administrador específico
+        $admin = User::factory()->create([
+            'name' => 'Juan Admin',
+            'email' => 'juan@admin.es',
+            'password' => bcrypt('12345678'),
+        ]);
 
-        // 2. Creamos 20 casas asociadas a este admin
-        // (He subido a 20 para que el catálogo se vea más lleno)
-        Property::factory(20)->create([
+        // Creamos las casas asociadas a ti
+        Property::factory(10)->create([
             'user_id' => $admin->id
         ]);
     }
