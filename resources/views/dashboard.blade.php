@@ -113,6 +113,7 @@
     @endunlessrole
 
     <div class="bg-slate-900 rounded-[2rem] border border-slate-800 shadow-2xl overflow-hidden">
+
         <div class="p-8 border-b border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 @if(isset($title) && $title === 'Mis Propiedades Favoritas')
@@ -121,6 +122,20 @@
                 @else
                     <h3 class="font-serif text-2xl text-white">Tu Cartera</h3>
                     <p class="text-slate-500 text-sm mt-1">Gestión de tus inmuebles publicados</p>
+                @endif
+            </div>
+
+            <div>
+                @if(isset($title) && $title === 'Mis Propiedades Favoritas')
+                    <a href="{{ route('properties.favorites.pdf') }}" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white transition-all text-[10px] font-bold uppercase tracking-widest shadow-lg">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        Descargar PDF
+                    </a>
+                @else
+                    <a href="{{ route('properties.portfolio.pdf') }}" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-400 hover:bg-orange-500 hover:text-white transition-all text-[10px] font-bold uppercase tracking-widest shadow-lg">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        Descargar PDF
+                    </a>
                 @endif
             </div>
         </div>

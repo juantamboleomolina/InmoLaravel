@@ -16,16 +16,21 @@ class PropertyFactory extends Factory
      */
     public function definition(): array
     {
+
+        $zonas = [
+            'Murcia Centro', 'La Manga', 'Cartagena',
+            'Los Alcázares', 'San Pedro', 'Cabo de Palos',
+            'Lorca', 'Águilas', 'Molina de Segura'
+        ];
+
         return [
             'title' => fake()->sentence(3),
             'description' => fake()->paragraph(),
-            'price' => fake()->numberBetween(150000, 2500000), // Solo precios altos
+            'price' => fake()->numberBetween(150000, 2500000),
             'rooms' => fake()->numberBetween(2, 7),
             'bathrooms' => fake()->numberBetween(1, 5),
             'area' => fake()->numberBetween(80, 600),
-            'location' => fake()->city(),
-            'type' => 'Venta', // Siempre venta
-
+            'location' => fake()->randomElement($zonas),'type' => 'Venta',
             'image' => fake()->randomElement([
                 'https://images.unsplash.com/photo-1600596542815-60089c5e8621?q=80&w=800&auto=format&fit=crop',
                 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=800&auto=format&fit=crop',

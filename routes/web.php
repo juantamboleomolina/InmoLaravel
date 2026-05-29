@@ -10,17 +10,13 @@ use App\Models\Property;
 // --- ZONA PÚBLICA ---
 
 Route::get('/', function () {
-    // Cogemos las últimas 6 para la portada
     $properties = Property::latest()->take(6)->get();
     return view('welcome', compact('properties'));
 });
 
-// RUTA DEL CATÁLOGO CON BUSCADOR Y FILTROS AVANZADOS
 Route::get('/catalogo', function (Request $request) {
-    // 1. Empezamos la consulta
     $query = Property::latest();
 
-    // 2. Filtro por nombre o tipo
     if ($request->filled('search')) {
         $query->where(function($q) use ($request) {
             $q->where('title', 'like', '%' . $request->search . '%')
@@ -28,34 +24,31 @@ Route::get('/catalogo', function (Request $request) {
         });
     }
 
-    // 3. Filtro por Localización
     if ($request->filled('location')) {
         $query->where('location', $request->location);
     }
 
-    // 4. Filtro por Precio Mínimo
     if ($request->filled('min_price')) {
         $query->where('price', '>=', $request->min_price);
     }
 
-    // 5. Filtro por Precio Máximo
     if ($request->filled('max_price')) {
         $query->where('price', '<=', $request->max_price);
     }
 
-    // Ejecutamos la búsqueda final
     $properties = $query->get();
 
     return view('public.catalog', compact('properties'));
 })->name('catalogo');
 
-// RUTA PARA VER LOS DETALLES DE UNA PROPIEDAD
 Route::get('/catalogo/{property}', function (Property $property) {
     return view('public.show', compact('property'));
 })->name('catalogo.show');
 
-// RUTA PARA SIMULAR EL CONTACTO
 Route::post('/catalogo/{property}/contactar', function (Property $property) {
+    if (!auth()->check()) {
+        return back()->with('error_login', 'Inicie sesión para poder contactar con el agente.');
+    }
     return back()->with('mensaje_enviado', '¡Mensaje enviado con éxito! El agente se pondrá en contacto contigo lo antes posible.');
 })->name('catalogo.contact');
 
@@ -70,11 +63,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         } else {
             $properties = Property::where('user_id', auth()->id())->latest()->get();
         }
-
         $title = 'Panel Principal';
-
         return view('dashboard', compact('properties', 'title'));
     })->name('dashboard');
+
+    // NUEVO: DESCARGAR CARTERA EN PDF
+    Route::get('/dashboard/cartera/pdf', [PropertyController::class, 'downloadPortfolioPdf'])->name('properties.portfolio.pdf');
 
     // --- GESTIÓN DE USUARIOS (ADMIN) ---
     Route::get('/admin/usuarios', [UserController::class, 'index'])->name('admin.users.index');
@@ -89,6 +83,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $title = 'Mis Propiedades Favoritas';
         return view('dashboard', compact('properties', 'title'));
     })->name('favoritos');
+
+    // NUEVO: DESCARGAR FAVORITOS EN PDF
+    Route::get('/dashboard/favoritos/pdf', [PropertyController::class, 'downloadFavoritesPdf'])->name('properties.favorites.pdf');
 
     // 3. Añadir/Quitar de favoritos (Toggle)
     Route::post('/properties/{property}/favorite', function (Property $property) {

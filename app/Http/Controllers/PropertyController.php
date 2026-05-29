@@ -8,6 +8,7 @@ use App\Http\Requests\StorePropertyRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
+use Barryvdh\DomPDF\Facade\Pdf; // NUEVO IMPORT PARA EL PDF
 
 class PropertyController extends Controller
 {
@@ -33,22 +34,16 @@ class PropertyController extends Controller
         return redirect()->route('catalogo')->with('status', '¡Propiedad publicada con éxito!');
     }
 
-    // --- NUEVO: MOSTRAR FORMULARIO DE EDICIÓN ---
     public function edit(Property $property)
     {
-        // Solo el dueño o el admin pueden editar
         Gate::authorize('update', $property);
-
         return view('properties.edit', compact('property'));
     }
 
-    // --- NUEVO: GUARDAR CAMBIOS ---
     public function update(Request $request, Property $property)
     {
-        // Solo el dueño o el admin pueden actualizar
         Gate::authorize('update', $property);
 
-        // Validamos igual que en la creación, pero la imagen ahora es opcional
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -57,7 +52,7 @@ class PropertyController extends Controller
             'area' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0',
             'location' => 'required|string|max:255',
-            'image' => 'nullable|image|max:2048', // Nullable para que no obligue a subir otra
+            'image' => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
@@ -73,9 +68,33 @@ class PropertyController extends Controller
     public function destroy(Property $property)
     {
         Gate::authorize('delete', $property);
-
         $property->delete();
 
         return back()->with('status', '¡Propiedad eliminada con éxito!');
+    }
+
+    // --- NUEVO: DESCARGAR PDF DE LA CARTERA ---
+    public function downloadPortfolioPdf()
+    {
+        if (auth()->user()->hasRole('admin')) {
+            $properties = Property::latest()->get();
+        } else {
+            $properties = Property::where('user_id', auth()->id())->latest()->get();
+        }
+
+        $title = "Mi Cartera de Inmuebles";
+
+        $pdf = Pdf::loadView('properties.pdf-report', compact('properties', 'title'));
+        return $pdf->download('mi_cartera_murcia_re.pdf');
+    }
+
+    // --- NUEVO: DESCARGAR PDF DE FAVORITOS ---
+    public function downloadFavoritesPdf()
+    {
+        $properties = auth()->user()->favorites()->latest()->get();
+        $title = "Mis Propiedades Favoritas";
+
+        $pdf = Pdf::loadView('properties.pdf-report', compact('properties', 'title'));
+        return $pdf->download('mis_favoritos_murcia_re.pdf');
     }
 }

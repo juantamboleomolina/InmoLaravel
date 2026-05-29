@@ -76,6 +76,16 @@
                 </div>
             @endif
 
+            @if(session('error_login'))
+                <div class="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 text-red-400 text-sm shadow-lg shadow-red-500/5 animate-pulse">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    <div class="flex flex-col">
+                        <p class="font-medium">{{ session('error_login') }}</p>
+                        <a href="{{ route('login') }}" class="text-xs font-bold underline mt-1 hover:text-red-300 transition-colors">Ir a la página de Login</a>
+                    </div>
+                </div>
+            @endif
+
             <div class="flex items-center gap-4">
 
                 <form action="{{ route('catalogo.contact', $property) }}" method="POST" class="flex-1">

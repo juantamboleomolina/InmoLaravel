@@ -59,7 +59,7 @@
     </div>
 </header>
 
-<div class="sticky top-24 z-40 px-6 mb-16 max-w-5xl mx-auto">
+<div class="relative z-40 px-6 mb-16 max-w-5xl mx-auto">
     <form action="{{ route('catalogo') }}" method="GET" id="searchForm">
 
         <div class="flex flex-col md:flex-row items-center gap-4">
