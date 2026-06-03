@@ -11,7 +11,24 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-serif { font-family: 'Playfair Display', serif; }
+        html { scroll-behavior: smooth; }
     </style>
+
+    <script>
+        window.toggleGallery = function() {
+            const gallery = document.getElementById('fullGallery');
+            if (gallery) {
+                gallery.classList.toggle('hidden');
+
+                // Si la acabamos de mostrar, hacemos scroll suave hacia ella
+                if (!gallery.classList.contains('hidden')) {
+                    setTimeout(() => {
+                        gallery.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 50); // Un mini retraso para asegurar que el navegador ya la ha dibujado
+                }
+            }
+        };
+    </script>
 </head>
 <body class="antialiased bg-slate-950 text-slate-200 selection:bg-orange-500 selection:text-white pb-20">
 
@@ -28,13 +45,33 @@
 </nav>
 
 <main class="max-w-7xl mx-auto px-6 pt-12">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-16">
 
-        <div class="relative rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl aspect-[4/5] lg:aspect-auto lg:h-[700px]">
-            <img src="{{ $property->image }}" alt="{{ $property->title }}" class="w-full h-full object-cover">
-            <div class="absolute top-6 left-6 px-4 py-2 bg-black/50 backdrop-blur-md rounded-full border border-white/10 text-orange-400 text-[10px] font-bold uppercase tracking-widest">
-                {{ $property->location }}
+        <div class="flex flex-col gap-4 lg:h-[700px]">
+
+            <div class="relative rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl flex-1 cursor-pointer hover:opacity-90 transition-opacity" onclick="window.toggleGallery()">
+                <img src="{{ $property->image }}" alt="{{ $property->title }}" class="w-full h-full object-cover">
+                <div class="absolute top-6 left-6 px-4 py-2 bg-black/50 backdrop-blur-md rounded-full border border-white/10 text-orange-400 text-[10px] font-bold uppercase tracking-widest z-10">
+                    {{ $property->location }}
+                </div>
             </div>
+
+            <div class="grid grid-cols-3 gap-4 h-32 md:h-40">
+                <div class="rounded-[1.5rem] overflow-hidden border border-white/10 shadow-lg cursor-pointer hover:opacity-80 transition-opacity" onclick="window.toggleGallery()">
+                    <img src="https://images.unsplash.com/photo-1600585154340-be6199f7a096?auto=format&fit=crop&w=600&q=80" alt="Interior 1" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+                </div>
+                <div class="rounded-[1.5rem] overflow-hidden border border-white/10 shadow-lg cursor-pointer hover:opacity-80 transition-opacity" onclick="window.toggleGallery()">
+                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80" alt="Interior 2" class="w-full h-full object-cover hover:scale-110 transition-transform duration-500">
+                </div>
+
+                <div class="rounded-[1.5rem] overflow-hidden border border-white/10 shadow-lg cursor-pointer relative group" onclick="window.toggleGallery()">
+                    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=600&q=80" alt="Interior 3" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center backdrop-blur-[1px] group-hover:bg-slate-900/40 transition-colors">
+                        <span class="text-white font-bold text-sm md:text-base tracking-wider uppercase group-hover:scale-105 transition-transform">+5 fotos</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div class="flex flex-col justify-center">
@@ -65,7 +102,7 @@
 
             <div class="prose prose-invert prose-slate mb-12">
                 <p class="text-slate-400 font-light leading-relaxed">
-                    Esta magnífica propiedad ubicada en {{ $property->location }} ofrece un estándar de vida inigualable. Con sus espacios generosos, acabados de primera calidad y diseño elegante, es una oportunidad única en el mercado inmobiliario actual.
+                    Esta magnífica propiedad de alto standing ofrece un estándar de vida inigualable. Con sus espacios generosos, acabados de primera calidad y diseño elegante, es una oportunidad única en el mercado inmobiliario actual.
                 </p>
             </div>
 
@@ -77,7 +114,7 @@
             @endif
 
             @if(session('error_login'))
-                <div class="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 text-red-400 text-sm shadow-lg shadow-red-500/5 animate-pulse">
+                <div class="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 text-red-400 text-sm shadow-lg shadow-red-500/5">
                     <svg class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                     <div class="flex flex-col">
                         <p class="font-medium">{{ session('error_login') }}</p>
@@ -87,7 +124,6 @@
             @endif
 
             <div class="flex items-center gap-4">
-
                 <form action="{{ route('catalogo.contact', $property) }}" method="POST" class="flex-1">
                     @csrf
                     <button type="submit" class="w-full bg-white text-slate-900 px-8 py-4 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-orange-500 hover:text-white transition shadow-lg text-center">
@@ -113,6 +149,37 @@
                 @endauth
             </div>
 
+        </div>
+    </div>
+
+    <div id="fullGallery" class="hidden mt-12 pt-12 border-t border-white/10">
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h2 class="font-serif text-3xl text-white">Galería Completa</h2>
+                <p class="text-slate-500 text-xs mt-1">Tour fotográfico detallado de la propiedad.</p>
+            </div>
+            <button onclick="window.toggleGallery()" class="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-widest flex items-center gap-2 transition-colors border border-white/10 px-4 py-2 rounded-full bg-slate-900">
+                Ocultar fotos
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="rounded-[2rem] overflow-hidden border border-white/5 aspect-[4/3] bg-slate-900">
+                <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80" alt="Salón principal" class="w-full h-full object-cover">
+            </div>
+            <div class="rounded-[2rem] overflow-hidden border border-white/5 aspect-[4/3] bg-slate-900">
+                <img src="https://images.unsplash.com/photo-1600585154340-be6199f7a096?auto=format&fit=crop&w=800&q=80" alt="Cocina abierta" class="w-full h-full object-cover">
+            </div>
+            <div class="rounded-[2rem] overflow-hidden border border-white/5 aspect-[4/3] bg-slate-900">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="Dormitorio principal" class="w-full h-full object-cover">
+            </div>
+            <div class="rounded-[2rem] overflow-hidden border border-white/5 aspect-[4/3] bg-slate-900">
+                <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80" alt="Baño suite" class="w-full h-full object-cover">
+            </div>
+            <div class="rounded-[2rem] overflow-hidden border border-white/5 aspect-[4/3] lg:col-span-2 bg-slate-900">
+                <img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200&q=80" alt="Piscina y jardín" class="w-full h-full object-cover">
+            </div>
         </div>
     </div>
 </main>
